@@ -20,6 +20,7 @@ public class AudioOptions : MonoBehaviour
     public void MusicVolume(float value)
     {
         audioMixer.SetFloat("MusicVol", value);
+        audioMixer.SetFloat("LocationMusicVol", value);
     }
 
     public void SoundsVolume(float value)

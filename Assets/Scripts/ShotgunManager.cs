@@ -21,6 +21,7 @@ public class ShotgunManager : MonoBehaviour
     public Transform attackPoint;
 
     public bool allowInvoke = true;
+    public InGameMenu inGameMenu;
 
     public void Awake()
     {
@@ -33,7 +34,7 @@ public class ShotgunManager : MonoBehaviour
 
     private void WeaponBehaviour()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0) && readyToShoot)
+        if(Input.GetKeyDown(KeyCode.Mouse0) && readyToShoot && inGameMenu.paused == false)
         {
             Shoot();
         }
@@ -52,12 +53,6 @@ public class ShotgunManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             targetPoint = hit.point;
-
-            if (hit.transform.tag == "Enemy")
-            {
-                Debug.Log("Hit Enemy");
-                //hit.transform.GetComponent<HealthManager>().TakeDamage(customBullet.explosionDamage);
-            }
         }
         else
         {

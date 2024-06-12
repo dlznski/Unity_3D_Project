@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 3303526301621746400}
+  healthManager: {fileID: 0}
 --- !u!135 &16453139
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -249,7 +250,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 28362039}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Village
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2181,7 +2182,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 241220195}
-  - component: {fileID: 241220196}
   m_Layer: 5
   m_Name: HealthBar
   m_TagString: Untagged
@@ -2211,20 +2211,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &241220196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 241220194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47b662512e07c564e87d3215526b08c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthBar: {fileID: 1316996371}
-  healthAmount: 100
 --- !u!1001 &242759453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3906,14 +3892,14 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -5859730670974028071, guid: cf8bad274c34c8342bf56e14663510d0, type: 2}
   m_audioClip: {fileID: 8300000, guid: 38fe9d198644ad145803926c1858c3fd, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 0
+  Priority: 10
   DopplerLevel: 0
   MinDistance: 15
   MaxDistance: 30
@@ -3926,10 +3912,19 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      time: 0.9911194
+      value: 0.9999962
+      inSlope: -2.0008
+      outSlope: -2.0008
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.99212646
+      value: 0
+      inSlope: -0.5002
+      outSlope: -0.5002
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -6470,7 +6465,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 1
+  Priority: 100
   DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 760
@@ -11584,7 +11579,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1696140301}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Triggers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14171,7 +14166,7 @@ GameObject:
   - component: {fileID: 1991263473}
   - component: {fileID: 1991263472}
   - component: {fileID: 1991263471}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DoorTigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14459,6 +14454,7 @@ GameObject:
   - component: {fileID: 2050468745}
   - component: {fileID: 2050468747}
   - component: {fileID: 2050468746}
+  - component: {fileID: 2050468748}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -14721,6 +14717,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2050468748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050468738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b662512e07c564e87d3215526b08c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 1316996371}
+  healthAmount: 100
+  animator: {fileID: 0}
+  isPlayer: 1
+  isDead: 0
 --- !u!1001 &2073459409
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16882,8 +16895,16 @@ PrefabInstance:
       value: DoorPivot
       objectReference: {fileID: 0}
     - target: {fileID: 4731791057892632213, guid: aad09432c61bfbf4aa2d7b90bb7fbbcf, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4731791057892632213, guid: aad09432c61bfbf4aa2d7b90bb7fbbcf, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6129069560956546133, guid: aad09432c61bfbf4aa2d7b90bb7fbbcf, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6129069560956546133, guid: aad09432c61bfbf4aa2d7b90bb7fbbcf, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -29419,6 +29440,7 @@ GameObject:
   - component: {fileID: 8878942871138279580}
   - component: {fileID: 8878942871138279581}
   - component: {fileID: 8878942871138279583}
+  - component: {fileID: 8878942871138279584}
   m_Layer: 7
   m_Name: Ghoul-Blue (Origin)
   m_TagString: Enemy
@@ -31298,17 +31320,17 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 3667135681307170935, guid: cf8bad274c34c8342bf56e14663510d0, type: 2}
   m_audioClip: {fileID: 8300000, guid: 411ef8343dea9e1429bf2fceaf6b9338, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 0
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -31343,7 +31365,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -31383,6 +31405,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8878942871138279584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8102969495911365152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b662512e07c564e87d3215526b08c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 0}
+  healthAmount: 100
+  animator: {fileID: 3303526301621746400}
+  isPlayer: 0
+  isDead: 0
 --- !u!1 &8913261347023143264
 GameObject:
   m_ObjectHideFlags: 0

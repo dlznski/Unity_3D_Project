@@ -22,10 +22,12 @@ public class GhoulAI : MonoBehaviour
 
     public void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") && healthManager.healthAmount > 0)
+        if (other.CompareTag("Player") && healthManager != null && healthManager.healthAmount > 0)
         {
-            animator.ResetTrigger("Idle");
-            animator.SetTrigger("Run");
+            if (healthManager.isDead)
+            {
+                return;
+            }
 
             Vector3 direction = (other.transform.position - transform.position).normalized;
             distance = Vector3.Distance(transform.position, other.transform.position);
@@ -34,10 +36,15 @@ public class GhoulAI : MonoBehaviour
             {
                 if (time <= 0)
                 {
-                    animator.ResetTrigger("Run");
+                    animator.SetBool("IsWalking", false);
                     animator.SetTrigger("Attack");
 
-                    other.SendMessage("Damage", 20);
+                    HealthManager playerHealth = other.GetComponent<HealthManager>();
+                    if (playerHealth != null)
+                    {
+                        playerHealth.TakeDamage(20);
+                    }
+
                     time = delay;
                 }
                 else
@@ -47,6 +54,9 @@ public class GhoulAI : MonoBehaviour
             }
             else
             {
+                animator.SetBool("IsWalking", true);
+                animator.SetBool("IsIdle", false);
+
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ghoulSpeed * Time.deltaTime);
 
@@ -59,8 +69,8 @@ public class GhoulAI : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            animator.ResetTrigger("Run");
-            animator.SetTrigger("Idle");
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsIdle", true);
         }
     }
 }

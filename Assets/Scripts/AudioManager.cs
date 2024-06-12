@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     public AudioMixer audioMixer;
     public AudioMixerSnapshot normalSnapshot;
     public AudioMixerSnapshot pausedSnapshot;
+    public AudioMixerSnapshot locationSnapshot;
 
     void Start()
     {
@@ -22,5 +23,10 @@ public class AudioManager : MonoBehaviour
     public void SetPausedAudio()
     {
         pausedSnapshot.TransitionTo(0.5f);
+    }
+
+    public void SetLocationAudio()
+    {
+        locationSnapshot.TransitionTo(0.5f);
     }
 }

@@ -12,6 +12,7 @@ public class InGameMenu : MonoBehaviour
     public Canvas inGameMenu;
     public Canvas options;
     public Canvas toMainMenu;
+    public Canvas hud;
 
     public AudioManager audioManager;
 
@@ -22,6 +23,7 @@ public class InGameMenu : MonoBehaviour
             inGameMenu.enabled = false;
             options.enabled = false;
             toMainMenu.enabled = false;
+            hud.enabled = true;
             Time.timeScale = 1;
             paused = false;
             audioManager.SetNormalAudio();
@@ -29,6 +31,7 @@ public class InGameMenu : MonoBehaviour
         else
         {
             inGameMenu.enabled = true;
+            hud.enabled = false;
             Time.timeScale = 0;
             paused = true;
             audioManager.SetPausedAudio();
@@ -47,6 +50,17 @@ public class InGameMenu : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             Escape();
+        }
+
+        if (paused == true)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 

@@ -54,7 +54,7 @@ public class CustomBullet : MonoBehaviour
             }
         }
 
-        Invoke("Delay", 0.05f);
+        Invoke("Delay", 0.01f);
     }
 
     private void Delay()

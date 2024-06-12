@@ -76,30 +76,6 @@ public class PlayerController : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(mouseVertical, 0, 0);
     }
 
-   /* private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.name == "Nazwa Obiektu")
-        {
-            Debug.Log("Collider wykry³ obiekt o nazwie: " + collision.gameObject.name);
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.name == "Nazwa Obiektu")
-        {
-            Debug.Log("Obiekt o nazwie: " + collision.gameObject.name + " dotyka collider");
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-           if (collision.gameObject.name == "Nazwa Obiektu")
-        {
-            Debug.Log("Obiekt o nazwie: " + collision.gameObject.name + " opuœci³ collider");
-        }
-    } */
-
     public float pushPower = 2.0f;
 
     void OnControllerColliderHit(ControllerColliderHit hit)
@@ -118,10 +94,5 @@ public class PlayerController : MonoBehaviour
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
         body.velocity = pushDir * pushPower;
-
-       /* if (hit.gameObject.tag == "3D Object")
-        {
-            Debug.Log("Wykryto obiekt o tagu 3D Object! Nazwa: " + hit.gameObject.name);
-        } */
     }
 }
