@@ -66,7 +66,11 @@ public class CustomBullet : MonoBehaviour
     {
         collsions++;
 
-        if (collision.collider.CompareTag("Enemy") && explodeOnTouch) Explode();
+        if (collision.collider.CompareTag("Enemy") && explodeOnTouch)
+        {
+            collision.collider.GetComponent<HealthManager>().TakeDamage(explosionDamage);
+            Explode();
+        }
     }
 
     private void Setup()

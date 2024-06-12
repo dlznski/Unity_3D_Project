@@ -5,16 +5,7 @@ using UnityEngine;
 public class GhoulAI : MonoBehaviour
 {
     public Animator animator;
-
     private float ghoulSpeed = 2.5f;
-
-    private Quaternion playerRotation;
-    private Quaternion ghoulRotation;
-
-    private float valueX;
-    private float valueZ;
-
-    private float healthAmount = 50f;
 
     private float distance;
     private float attackDistance = 2f;
@@ -22,34 +13,32 @@ public class GhoulAI : MonoBehaviour
     private float delay = 1.5f;
     private float time = 0;
 
+    private HealthManager healthManager;
+
+    private void Start()
+    {
+        healthManager = GetComponent<HealthManager>();
+    }
+
     public void OnTriggerStay(Collider other)
     {
-        if (other.tag == "Player" && healthAmount > 0)
+        if (other.CompareTag("Player") && healthManager.healthAmount > 0)
         {
             animator.ResetTrigger("Idle");
             animator.SetTrigger("Run");
 
-            playerRotation = Quaternion.LookRotation(other.transform.position - transform.position);
-            valueX = transform.rotation.x;
-            valueZ = transform.rotation.z;
-
-            ghoulRotation = Quaternion.Slerp(transform.rotation, playerRotation, ghoulSpeed * Time.deltaTime);
-            ghoulRotation.x = valueX;
-            ghoulRotation.z = valueZ;
-
-            transform.rotation = ghoulRotation;
-
-            distance = Vector3.Distance(transform.position, transform.position);
+            Vector3 direction = (other.transform.position - transform.position).normalized;
+            distance = Vector3.Distance(transform.position, other.transform.position);
 
             if (distance <= attackDistance)
             {
                 if (time <= 0)
                 {
-                    animator.ResetTrigger("Move");
+                    animator.ResetTrigger("Run");
                     animator.SetTrigger("Attack");
 
                     other.SendMessage("Damage", 20);
-                    time -= delay;
+                    time = delay;
                 }
                 else
                 {
@@ -58,6 +47,9 @@ public class GhoulAI : MonoBehaviour
             }
             else
             {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ghoulSpeed * Time.deltaTime);
+
                 transform.Translate(Vector3.forward * ghoulSpeed * Time.deltaTime);
             }
         }
@@ -65,7 +57,7 @@ public class GhoulAI : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             animator.ResetTrigger("Run");
             animator.SetTrigger("Idle");

@@ -10,9 +10,11 @@ public class HealthManager : MonoBehaviour
     public float healthAmount = 100f;
     public Animator animator;
 
+    private bool isDead = false;
+
     private void Update()
     {
-        if (healthAmount <= 0)
+        if (healthAmount <= 0 && !isDead)
         {
             Die();
         }
@@ -21,9 +23,12 @@ public class HealthManager : MonoBehaviour
     public void TakeDamage(float damage)
     {
         healthAmount -= damage;
-        healthBar.fillAmount = healthAmount / 100f;
+        if (healthBar != null)
+        {
+            healthBar.fillAmount = healthAmount / 100f;
+        }
 
-        if(healthAmount <= 0)
+        if(healthAmount <= 0 && !isDead)
         {
             Die();
         }
@@ -34,13 +39,17 @@ public class HealthManager : MonoBehaviour
         healthAmount += heal;
         healthAmount = Mathf.Clamp(healthAmount, 0, 100);
 
-        healthBar.fillAmount = healthAmount / 100f;
+        if (healthBar != null)
+        {
+            healthBar.fillAmount = healthAmount / 100f;
+        }
     }
 
     private void Die()
     {      
-        animator.SetTrigger("Die");
-        StartCoroutine(RemoveAfterDelay(10f));
+        isDead = true;
+        animator.SetTrigger("Death");
+        StartCoroutine(RemoveAfterDelay(6f));
     }
 
     private IEnumerator RemoveAfterDelay(float delay)
