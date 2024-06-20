@@ -53,6 +53,7 @@ public class InGameMenu : MonoBehaviour
         introduceManager = FindObjectOfType<IntroduceManager>();
 
         Time.timeScale = 1;
+        PickUpGun.isArmed = false;
     }
 
     void Update()

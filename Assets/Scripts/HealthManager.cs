@@ -58,6 +58,7 @@ public class HealthManager : MonoBehaviour
         isDead = true;
         if(isPlayer == true)
         {
+            PickUpGun.isArmed = false;
             inGameMenu.SetDeath();
         }
         else
