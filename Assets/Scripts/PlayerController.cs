@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public CharacterController characterController;
     public float movementSpeed = 5.0f;
-    public float rotationSpeed = 1.0f;
+    public float rotationSpeed = 0.5f;
 
     public float vertical = 0f;
     public float horizontal = 0f;
@@ -15,22 +15,23 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight = 5f;
     public float runningSpeed = 5.0f;
 
-    public float sensitivity = 0.2f;
+    public float sensitivity = 1f;
     public float verticalRange = 360.0f;
     public float mouseVertical = 0.0f;
-    public float mouseHorizontal = 1.0f;
+    public float mouseHorizontal = 0.0f;
 
-    public InGameMenu gameMenu;
+    public InGameMenu inGameMenu;
+
 
     void Start()
     {
         CharacterController controller = GetComponent<CharacterController>();
+        inGameMenu = FindObjectOfType<InGameMenu>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (gameMenu.paused == false)
+        if (inGameMenu.paused == false)
         { 
         KeyboardController();
         MouseController();
@@ -67,12 +68,14 @@ public class PlayerController : MonoBehaviour
 
     void MouseController()
     {
-        mouseVertical -= Input.GetAxis("Mouse Y") * sensitivity;
-        mouseHorizontal += Input.GetAxis("Mouse X") * sensitivity;
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
 
-        transform.Rotate(0, mouseHorizontal, 0);
+        transform.Rotate(0, mouseX, 0);
 
+        mouseVertical -= mouseY;
         mouseVertical = Mathf.Clamp(mouseVertical, -verticalRange, verticalRange);
+
         Camera.main.transform.localRotation = Quaternion.Euler(mouseVertical, 0, 0);
     }
 

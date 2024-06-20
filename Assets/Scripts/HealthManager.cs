@@ -13,6 +13,13 @@ public class HealthManager : MonoBehaviour
     public bool isPlayer = false;
     public bool isDead = false;
 
+    private InGameMenu inGameMenu;
+
+    void Start()
+    {
+        inGameMenu = FindObjectOfType<InGameMenu>();
+    }
+
     private void Update()
     {
         if (healthAmount <= 0 && !isDead)
@@ -35,7 +42,7 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    /*public void Heal(float heal)
+    public void Heal(float heal)
     {
         healthAmount += heal;
         healthAmount = Mathf.Clamp(healthAmount, 0, 100);
@@ -44,14 +51,14 @@ public class HealthManager : MonoBehaviour
         {
             healthBar.fillAmount = healthAmount / 100f;
         }
-    }*/
+    }
 
     private void Die()
     {      
         isDead = true;
         if(isPlayer == true)
         {
-            StartCoroutine(ReloadLevelAfterDelay(0f));
+            inGameMenu.SetDeath();
         }
         else
         {

@@ -13,8 +13,11 @@ public class InGameMenu : MonoBehaviour
     public Canvas options;
     public Canvas toMainMenu;
     public Canvas hud;
+    public Canvas victory;
+    public Canvas death;
 
     public AudioManager audioManager;
+    private IntroduceManager introduceManager;
 
     private void Escape()
     {
@@ -40,14 +43,21 @@ public class InGameMenu : MonoBehaviour
 
     void Start()
     {
+        paused = false;
         inGameMenu.enabled = false;
         options.enabled = false;
         toMainMenu.enabled = false;
+        victory.enabled = false;
+        death.enabled = false;
+
+        introduceManager = FindObjectOfType<IntroduceManager>();
+
+        Time.timeScale = 1;
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !victory.enabled && !introduceManager.introduce.enabled)
         {
             Escape();
         }
@@ -62,6 +72,24 @@ public class InGameMenu : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+    }
+
+    public void SetDeath()
+    {
+        paused = true;
+        death.enabled = true;
+        hud.enabled = false;
+        Time.timeScale = 0;
+        audioManager.SetPausedAudio();
+    }
+
+    public void SetVictory()
+    {
+        paused = true;
+        victory.enabled = true;
+        hud.enabled = false;
+        Time.timeScale = 0;
+        audioManager.SetPausedAudio();
     }
 
     public void Resume()
@@ -97,5 +125,16 @@ public class InGameMenu : MonoBehaviour
     {
         inGameMenu.enabled = true;
         toMainMenu.enabled = false;
+    }
+
+    public void PlayButton()
+    {
+        StartCoroutine(ReloadLevelAfterDelay(0f));
+    }
+
+    private IEnumerator ReloadLevelAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

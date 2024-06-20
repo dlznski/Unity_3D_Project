@@ -7,49 +7,30 @@ using UnityEngine.UI;
 public class PointCounter : MonoBehaviour
 {
     public Text counter;
-    public Text time;
-
-    private float timer = 0;
-    private int minutes = 0;
-    private int seconds = 0;
-
-    public PointCounter[] objects;
+    private InGameMenu inGameMenu;
 
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-        timer += Time.deltaTime;
-        seconds = (int)timer;
-
-        if (seconds == 60)
-        {
-            minutes++;
-            timer = 0;
-        }
+        inGameMenu = FindObjectOfType<InGameMenu>();
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
-            if (Points() == 1)
-            {
-                Destroy(gameObject, 0.1f);
-                counter.enabled = false;
+            int pointsLeft = Points() - 1;
 
-                time.text = "Gratulacje! Uda³o Ci siê zebraæ wszystkie kryszta³y!" + "\n" + "Czas: " + minutes + " minut " + seconds + " sekund!";
+            Destroy(gameObject, 0.1f);
+
+            if (pointsLeft == 0)
+            {
+                counter.enabled = false;
+                inGameMenu.SetVictory();
             }
             else
             {
-                Destroy(gameObject, 0.1f);
-
                 int currentValue = Convert.ToInt32(counter.text);
                 currentValue++;
-
                 counter.text = Convert.ToString(currentValue);
             }
         }
@@ -57,7 +38,6 @@ public class PointCounter : MonoBehaviour
 
     public int Points()
     {
-        objects = Component.FindObjectsOfType<PointCounter>();
-        return objects.Length;
+        return FindObjectsOfType<PointCounter>().Length;
     }
 }

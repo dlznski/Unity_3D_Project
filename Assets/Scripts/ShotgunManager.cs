@@ -11,22 +11,29 @@ public class ShotgunManager : MonoBehaviour
 
     public float shootForce, upwardForce;
 
-    public float timeBetweenShooting, spread, timeBeetweenshots;
-    public int bulletsPerTap;
+    public float timeBetweenShooting, spread, timeBetweenShots;
+    public int bulletsPerTap = 2;
 
-    bool shooting, readyToShoot;
+    private bool readyToShoot;
 
-    private CustomBullet customBullet;
     public Camera MainCamera;
     public Transform attackPoint;
+    public Transform attackPoint2;
 
-    public bool allowInvoke = true;
-    public InGameMenu inGameMenu;
+    private InGameMenu inGameMenu;
+
+    private bool allowInvoke = true;
+
+    private void Start()
+    {
+        inGameMenu = FindObjectOfType<InGameMenu>();
+    }
 
     public void Awake()
     {
         readyToShoot = true;
     }
+
     private void Update()
     {
         WeaponBehaviour();
@@ -34,7 +41,7 @@ public class ShotgunManager : MonoBehaviour
 
     private void WeaponBehaviour()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0) && readyToShoot && inGameMenu.paused == false)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && readyToShoot && !inGameMenu.paused)
         {
             Shoot();
         }
@@ -46,31 +53,44 @@ public class ShotgunManager : MonoBehaviour
         animator.SetTrigger("Fire");
         shotgunSound.Play();
 
-        Ray ray = MainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
-
-        Vector3 targetPoint;
-        if (Physics.Raycast(ray, out hit))
+        for (int i = 0; i < bulletsPerTap; i++)
         {
-            targetPoint = hit.point;
+            Transform currentAttackPoint = (i == 0) ? attackPoint : attackPoint2;
+
+            Ray ray = MainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            RaycastHit hit;
+
+            Vector3 targetPoint;
+            if (Physics.Raycast(ray, out hit))
+            {
+                targetPoint = hit.point;
+            }
+            else
+            {
+                targetPoint = ray.GetPoint(75);
+            }
+
+            Vector3 directionWithoutSpread = targetPoint - currentAttackPoint.position;
+
+            float x = Random.Range(-spread, spread);
+            float y = Random.Range(-spread, spread);
+
+            Vector3 directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
+
+            GameObject currentBullet = Instantiate(bullet, currentAttackPoint.position, Quaternion.identity);
+            currentBullet.transform.forward = directionWithSpread.normalized;
+
+            Rigidbody bulletRb = currentBullet.GetComponent<Rigidbody>();
+            if (bulletRb != null)
+            {
+                bulletRb.AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
+                bulletRb.AddForce(MainCamera.transform.up * upwardForce, ForceMode.Impulse);
+            }
+            else
+            {
+                Debug.LogError("Rigidbody component is missing on the bullet prefab.");
+            }
         }
-        else
-        {
-            targetPoint = ray.GetPoint(75);
-        }
-
-        Vector3 directionWithoutSpread = targetPoint - attackPoint.position;
-
-        float x = Random.Range(-spread, spread);
-        float y = Random.Range(-spread, spread);
-
-        Vector3 directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
-
-        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
-        currentBullet.transform.forward = directionWithSpread.normalized;
-
-        currentBullet.GetComponent<Rigidbody>().AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
-        currentBullet.GetComponent<Rigidbody>().AddForce(MainCamera.transform.up * upwardForce, ForceMode.Impulse);
 
         if (allowInvoke)
         {
