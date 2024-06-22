@@ -5,6 +5,7 @@ using UnityEngine;
 public class MusicZone : MonoBehaviour
 {
     public AudioManager audioManager;
+    public AudioClip locationMusic;
 
     private void OnTriggerEnter(Collider other)
     {

@@ -17,16 +17,20 @@ public class AudioManager : MonoBehaviour
 
     public void SetNormalAudio()
     {
+        Debug.Log("Switching to normal Audio");
         normalSnapshot.TransitionTo(0.5f);
     }
 
     public void SetPausedAudio()
     {
         pausedSnapshot.TransitionTo(0.5f);
+
     }
 
     public void SetLocationAudio()
     {
+        Debug.Log("Switching to Location Audio");
         locationSnapshot.TransitionTo(0.5f);
     }
+
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GhoulAI : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class GhoulAI : MonoBehaviour
     private HealthManager healthManager;
     private Collider playerCollider;
     private InGameMenu inGameMenu;
-
+    private NavMeshAgent navMeshAgent;
     private bool isPlayerInRange = false;
 
     private void Start()
@@ -25,6 +26,7 @@ public class GhoulAI : MonoBehaviour
         healthManager = GetComponent<HealthManager>();
         playerCollider = GameObject.FindWithTag("Player").GetComponent<Collider>();
         inGameMenu = FindObjectOfType<InGameMenu>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
 
         if (ghoulAudioSource != null)
         {
@@ -33,68 +35,102 @@ public class GhoulAI : MonoBehaviour
         }
     }
 
-    private void Update()
+    void Update()
     {
-        HandleAudio();
+        if (healthManager.isDead)
+        {
+            StopAllActions();
+        }
+        else if (isPlayerInRange && !inGameMenu.paused)
+        {
+            FollowPlayer();
+            PlayAudio();
+            CheckAttack();
+        }
+        else
+        {
+            navMeshAgent.isStopped = true;
+            if (ghoulAudioSource.isPlaying)
+            {
+                ghoulAudioSource.Stop();
+            }
+        }
     }
 
-    private void HandleAudio()
+    private void PlayAudio()
     {
-        if (isPlayerInRange && !inGameMenu.paused && !ghoulAudioSource.isPlaying)
+        if (!ghoulAudioSource.isPlaying)
         {
             ghoulAudioSource.Play();
         }
-        else if ((!isPlayerInRange || inGameMenu.paused) && ghoulAudioSource.isPlaying)
+    }
+
+    private void FollowPlayer()
+    {
+        if (playerCollider != null && !healthManager.isDead)
+        {
+            navMeshAgent.isStopped = false;
+            navMeshAgent.SetDestination(playerCollider.transform.position);
+        }
+    }
+
+    private void StopAllActions()
+    {
+        navMeshAgent.isStopped = true;
+        navMeshAgent.ResetPath();
+        if (ghoulAudioSource.isPlaying)
         {
             ghoulAudioSource.Stop();
+        }
+        animator.SetBool("IsWalking", false);
+        animator.SetBool("IsIdle", true);
+    }
+
+    private void CheckAttack()
+    {
+        distance = Vector3.Distance(transform.position, playerCollider.transform.position);
+
+        if (distance <= attackDistance)
+        {
+            if (time <= 0)
+            {
+                animator.SetBool("IsWalking", false);
+                animator.SetTrigger("Attack");
+
+                HealthManager playerHealth = playerCollider.GetComponent<HealthManager>();
+                if (playerHealth != null)
+                {
+                    Debug.Log("Attacking player");
+                    playerHealth.TakeDamage(20);
+                }
+
+                time = delay;
+            }
+            else
+            {
+                time -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            animator.SetBool("IsWalking", true);
+            animator.SetBool("IsIdle", false);
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other == playerCollider)
+        {
+            isPlayerInRange = true;
         }
     }
 
     public void OnTriggerStay(Collider other)
     {
-        if (other == playerCollider && healthManager != null && healthManager.healthAmount > 0)
+        if (other == playerCollider && !healthManager.isDead && healthManager.healthAmount > 0)
         {
             isPlayerInRange = true;
-
-            if (healthManager.isDead)
-            {
-                return;
-            }
-
-            Vector3 direction = (other.transform.position - transform.position).normalized;
-            distance = Vector3.Distance(transform.position, other.transform.position);
-
-            if (distance <= attackDistance)
-            {
-                if (time <= 0)
-                {
-                    animator.SetBool("IsWalking", false);
-                    animator.SetTrigger("Attack");
-
-                    HealthManager playerHealth = other.GetComponent<HealthManager>();
-                    if (playerHealth != null)
-                    {
-                        Debug.Log("Attacking player");
-                        playerHealth.TakeDamage(20);
-                    }
-
-                    time = delay;
-                }
-                else
-                {
-                    time -= Time.deltaTime;
-                }
-            }
-            else
-            {
-                animator.SetBool("IsWalking", true);
-                animator.SetBool("IsIdle", false);
-
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ghoulSpeed * Time.deltaTime);
-
-                transform.Translate(Vector3.forward * ghoulSpeed * Time.deltaTime);
-            }
         }
     }
 
@@ -105,6 +141,11 @@ public class GhoulAI : MonoBehaviour
             isPlayerInRange = false;
             animator.SetBool("IsWalking", false);
             animator.SetBool("IsIdle", true);
+            if (ghoulAudioSource.isPlaying)
+            {
+                ghoulAudioSource.Stop();
+            }
+            navMeshAgent.isStopped = true;
         }
     }
 }
