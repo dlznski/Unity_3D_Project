@@ -60,4 +60,4 @@ We plan to introduce more levels, additional enemies, and new weapon options in 
 ---
 
 ## Credits
-- **Game Developer:** Amadeusz Dłużniewski
+- **Game Developer:** @dlznski
